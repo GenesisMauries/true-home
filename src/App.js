@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Container} from 'reactstrap';
 import Label from './Components/Label';
+import Property from './Components/Property';
 
 
 class App extends Component {
@@ -9,6 +10,7 @@ class App extends Component {
       <div className="App">
       <Container>
       <Label />
+      <Property />
 
       </Container>
         
