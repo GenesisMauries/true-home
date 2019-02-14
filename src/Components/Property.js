@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import base from '../Firestoredb';
+import {Table, Button} from 'reactstrap';
 
 class Property extends Component{
     state={
@@ -20,12 +21,38 @@ class Property extends Component{
         })
     }
     render(){
+        const {items} = this.state;
         return(
             <div>
-
+            <Table hover className='text-center'>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Domicilio</th>
+                        <th>Valor</th>
+                        <th>Editar</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {items && items !== undefined ? 
+                      
+                      items.map((item, key)=>
+                      
+                        <tr key={key}>
+                          <td>{item.data.name}</td>
+                          <td>{item.data.address}</td>
+                          <td>{item.data.item}</td>
+                          <td><Button color='warning'>Editar</Button></td>
+                          
+                        </tr>
+                     ) 
+                     : <span>Null</span>}
+                </tbody>
+            </Table>
             </div>
         )
     }
-}
+};
 
 export default Property;
