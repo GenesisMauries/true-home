@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import base from '../Firestoredb';
-import {Table, Button, Row, Col, InputGroup, Input} from 'reactstrap';
+import {Alert, Table, Button, Row, Col, InputGroup, Input} from 'reactstrap';
 
 class Property extends Component{
     state={
         items:[],
         inputName:'',
         edit:false,
-        id:''
-        
+        id:'',
+        fadeIn:false,
+        message:''
     }
     componentDidMount(){
         base.collection('all').onSnapshot((snapShots) =>{
@@ -37,9 +38,9 @@ class Property extends Component{
             base.collection('all').add({
                 name: inputName
             }).then(()=>{
-                console.log('Agregado');
+                this.message('Agregado');
             }).catch((error)=>{
-                console.log(error);
+                this.message(error);
             })
         }else{
             this.update();
@@ -70,11 +71,29 @@ class Property extends Component{
         base.collection('all').doc(id).update({
             name: inputName
         }).then(()=>{
-            console.log('actualizado')
+            this.message('Actualizado')
         }).catch((error)=>{
-            console.log(error)
+            this.message(error)
+        })
+        
+    }
+
+    //Borra
+    deleteData= (id)=>{
+        base.collection('all').doc(id).delete()
+        this.message('Propiedad eliminada')
+    }
+
+    //Mensaje
+    message= (message)=>{
+        this.setState({
+            fadeIn: true,
+            message: message,
+            inputName:''
         })
     }
+
+    
 
     render(){
         const {items} = this.state;
@@ -98,6 +117,9 @@ class Property extends Component{
                     </div>
                 </Col>
             </Row>
+            <Alert in={this.state.fadeIn} tag='h6' className='mt-3 text-center text-success'>
+                {this.state.message}
+            </Alert>
             <Table hover className='text-center mt-5'>
                 <thead>
                     <tr>
@@ -118,8 +140,8 @@ class Property extends Component{
                           <td>{item.data.name}</td>
                           {/* <td>{item.data.address}</td>
                           <td>{item.data.item}</td> */}
-                          <td><Button color='warning'onClick={()=>this.getData(item.id)}>Editar</Button></td>
-                          <td><Button color='danger'>Eliminar</Button></td>
+                          <td><Button color='warning' onClick={()=>this.getData(item.id)}>Editar</Button></td>
+                          <td><Button color='danger' onClick={()=>this.deleteData(item.id)}>Eliminar</Button></td>
                           
                         </tr>
                      ) 
