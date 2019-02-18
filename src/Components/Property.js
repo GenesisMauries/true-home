@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import base from '../Firestoredb';
 import {Fade, Table, Button, Row, Col, InputGroup, Input} from 'reactstrap';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
+import '../App.css'
+
+library.add(faTrash, faEdit)
 
 class Property extends Component{
    
@@ -115,6 +121,7 @@ class Property extends Component{
             
         },2000) 
     }
+    
 
     
 
@@ -131,6 +138,7 @@ class Property extends Component{
                             name='inputName'
                             value={this.state.inputName}
                             onChange={this.changeValue}
+                            className='address'
                             required
                         />
                         <Input 
@@ -139,6 +147,7 @@ class Property extends Component{
                         name='inputAddress'
                         value={this.state.inputAddress}
                         onChange={this.changeValue}
+                        className='address'
                         required
                         />
                         <Input 
@@ -180,9 +189,15 @@ class Property extends Component{
                         <tr key={key}>
                           <td>{item.data.name}</td>
                           <td>{item.data.address}</td>
-                          <td>{item.data.item}</td>
-                          <td><Button color='warning' onClick={()=>this.getData(item.id)}>Editar</Button></td>
-                          <td><Button color='danger' onClick={()=>this.deleteData(item.id)}>Eliminar</Button></td>
+                          <td>{'$'+item.data.item}</td>
+                          <td><Button color='warning' onClick={()=>this.getData(item.id)}>
+                          <FontAwesomeIcon icon="edit" />
+                          
+                          </Button></td>
+                          <td><Button color='danger' onClick={()=>this.deleteData(item.id)}>
+                          <FontAwesomeIcon icon="trash" />
+                          
+                          </Button></td>
                           
                         </tr>
                      ) 
