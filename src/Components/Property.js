@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
 import base from '../Firestoredb';
-import {Alert, Table, Button, Row, Col, InputGroup, Input} from 'reactstrap';
+import {Fade, Table, Button, Row, Col, InputGroup, Input} from 'reactstrap';
 
 class Property extends Component{
+   
+
     state={
         items:[],
         inputName:'',
+        inputAddress:'',
+        inputItem:'',
         edit:false,
         id:'',
         fadeIn:false,
@@ -25,18 +29,22 @@ class Property extends Component{
         
     }
 
-    changeValue= (e) =>{
+    changeValue= (event ) =>{
+        console.log(event.target.value)
         this.setState({
-            inputName:e.target.value
+            [event.target.name]: event.target.value,
+            
         })
     }
     //Agrega 
     action= ()=>{
-        const{inputName, edit} = this.state;
+        const{ inputAddress, inputName, edit, inputItem} = this.state;
 
         if(edit === false){
             base.collection('all').add({
-                name: inputName
+                name: inputName,
+                address: inputAddress,
+                item: inputItem
             }).then(()=>{
                 this.message('Agregado');
             }).catch((error)=>{
@@ -55,6 +63,8 @@ class Property extends Component{
           if(doc.exists){
               this.setState({
                   inputName: doc.data().name,
+                  inputAddress: doc.data().address,
+                  inputItem: doc.data().item,
                   edit:true,
                   id:doc.id
               })
@@ -65,13 +75,17 @@ class Property extends Component{
           console.log(e);
       })
     }
-
     update= ()=>{
-        const {id,inputName} = this.state;
+        const {id,inputName, inputAddress, inputItem} = this.state;
         base.collection('all').doc(id).update({
-            name: inputName
+            name: inputName,
+            address: inputAddress,
+            item: inputItem
         }).then(()=>{
             this.message('Actualizado')
+            this.setState({
+                edit:false
+            })
         }).catch((error)=>{
             this.message(error)
         })
@@ -89,8 +103,17 @@ class Property extends Component{
         this.setState({
             fadeIn: true,
             message: message,
-            inputName:''
+            inputName:'',
+            inputAddress:'',
+            inputItem:''
         })
+        setTimeout(()=> {
+            this.setState({
+                fadeIn: false,
+                message: ''
+            })
+            
+        },2000) 
     }
 
     
@@ -103,9 +126,28 @@ class Property extends Component{
                 <Col xs='10'>
                     <InputGroup>
                         <Input
-                            placeholder='Nombre del propietario'
+                            placeholder='Propietari@'
+                            type='text'
+                            name='inputName'
                             value={this.state.inputName}
                             onChange={this.changeValue}
+                            required
+                        />
+                        <Input 
+                        placeholder='Domicilio'
+                        type='text'
+                        name='inputAddress'
+                        value={this.state.inputAddress}
+                        onChange={this.changeValue}
+                        required
+                        />
+                        <Input 
+                        placeholder='Valor'
+                        type='number'
+                        name='inputItem'
+                        value={this.state.inputItem}
+                        onChange={this.changeValue}
+                        required
                         />
                     </InputGroup>
                 </Col>
@@ -117,15 +159,15 @@ class Property extends Component{
                     </div>
                 </Col>
             </Row>
-            <Alert in={this.state.fadeIn} tag='h6' className='mt-3 text-center text-success'>
+            <Fade in={this.state.fadeIn} tag='h6' className='mt-3 text-center text-success'>
                 {this.state.message}
-            </Alert>
+            </Fade>
             <Table hover className='text-center mt-5'>
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        {/* <th>Domicilio</th>
-                        <th>Valor</th> */}
+                        <th>Domicilio</th>
+                        <th>Valor</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                         
@@ -135,11 +177,10 @@ class Property extends Component{
                     {items && items !== undefined ? 
                       
                       items.map((item, key)=>
-                      
                         <tr key={key}>
                           <td>{item.data.name}</td>
-                          {/* <td>{item.data.address}</td>
-                          <td>{item.data.item}</td> */}
+                          <td>{item.data.address}</td>
+                          <td>{item.data.item}</td>
                           <td><Button color='warning' onClick={()=>this.getData(item.id)}>Editar</Button></td>
                           <td><Button color='danger' onClick={()=>this.deleteData(item.id)}>Eliminar</Button></td>
                           
