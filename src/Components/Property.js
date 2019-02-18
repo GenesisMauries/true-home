@@ -5,12 +5,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
 import '../App.css'
-
 library.add(faTrash, faEdit)
 
 class Property extends Component{
-   
-
     state={
         items:[],
         inputName:'',
@@ -36,7 +33,7 @@ class Property extends Component{
     }
 
     changeValue= (event ) =>{
-        console.log(event.target.value)
+        // console.log(event.target.value)
         this.setState({
             [event.target.name]: event.target.value,
             
@@ -45,7 +42,6 @@ class Property extends Component{
     //Agrega 
     action= ()=>{
         const{ inputAddress, inputName, edit, inputItem} = this.state;
-
         if(edit === false){
             base.collection('all').add({
                 name: inputName,
@@ -64,19 +60,18 @@ class Property extends Component{
     //Edita
     getData= (id)=>{
       let ref= base.collection('all').doc(id);
-
       ref.get().then((doc)=>{
           if(doc.exists){
               this.setState({
-                  inputName: doc.data().name,
-                  inputAddress: doc.data().address,
-                  inputItem: doc.data().item,
-                  edit:true,
-                  id:doc.id
-              })
-          }else{
-              alert('El documento no existe');
-          }
+                inputName: doc.data().name,
+                inputAddress: doc.data().address,
+                inputItem: doc.data().item,
+                edit:true,
+                id:doc.id
+                })
+            }else{
+                alert('El documento no existe');
+            }
       }).catch((e)=>{
           console.log(e);
       })
@@ -94,8 +89,7 @@ class Property extends Component{
             })
         }).catch((error)=>{
             this.message(error)
-        })
-        
+        })  
     }
 
     //Borra
@@ -122,17 +116,14 @@ class Property extends Component{
         },2000) 
     }
     
-
-    
-
     render(){
         const {items} = this.state;
         return(
-            <div>
-            <Row>
-                <Col xs='10'>
-                    <InputGroup>
-                        <Input
+            <React.Fragment>
+                <Row>
+                    <Col xs='10'>
+                        <InputGroup>
+                            <Input 
                             placeholder='Propietari@'
                             type='text'
                             name='inputName'
@@ -140,71 +131,69 @@ class Property extends Component{
                             onChange={this.changeValue}
                             className='address'
                             required
-                        />
-                        <Input 
-                        placeholder='Domicilio'
-                        type='text'
-                        name='inputAddress'
-                        value={this.state.inputAddress}
-                        onChange={this.changeValue}
-                        className='address'
-                        required
-                        />
-                        <Input 
-                        placeholder='Valor'
-                        type='number'
-                        name='inputItem'
-                        value={this.state.inputItem}
-                        onChange={this.changeValue}
-                        required
-                        />
-                    </InputGroup>
-                </Col>
-                <Col xs='2'>
-                    <div className='text-right'>
-                        <Button color='info' onClick={this.action}>
-                        {this.state.edit ? 'Editar': 'Agregar'}
-                        </Button>
-                    </div>
-                </Col>
-            </Row>
-            <Fade in={this.state.fadeIn} tag='h6' className='mt-3 text-center text-success'>
-                {this.state.message}
-            </Fade>
-            <Table hover className='text-center mt-5'>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Domicilio</th>
-                        <th>Valor</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    {items && items !== undefined ? 
-                      
-                      items.map((item, key)=>
-                        <tr key={key}>
-                          <td>{item.data.name}</td>
-                          <td>{item.data.address}</td>
-                          <td>{'$'+item.data.item}</td>
-                          <td><Button color='warning' onClick={()=>this.getData(item.id)}>
-                          <FontAwesomeIcon icon="edit" />
-                          
-                          </Button></td>
-                          <td><Button color='danger' onClick={()=>this.deleteData(item.id)}>
-                          <FontAwesomeIcon icon="trash" />
-                          
-                          </Button></td>
-                          
+                            />
+                            <Input 
+                            placeholder='Domicilio'
+                            type='text'
+                            name='inputAddress'
+                            value={this.state.inputAddress}
+                            onChange={this.changeValue}
+                            className='address'
+                            required
+                            />
+                            <Input 
+                            placeholder='Valor'
+                            type='number'
+                            name='inputItem'
+                            value={this.state.inputItem}
+                            onChange={this.changeValue}
+                            required
+                            />
+                        </InputGroup>
+                    </Col>
+                    <Col xs='2'>
+                        <div className='text-right'>
+                            <Button color='info' onClick={this.action}>
+                                {this.state.edit ? 'Editar': 'Agregar'}
+                            </Button>
+                        </div>
+                    </Col>
+                </Row>
+                <Fade in={this.state.fadeIn} tag='h6' className='mt-3 text-center text-success'>
+                    {this.state.message}
+                </Fade>
+                <Table hover className='text-center mt-5'>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Domicilio</th>
+                            <th>Valor</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
                         </tr>
-                     ) 
-                     : <span>Null</span>}
-                </tbody>
-            </Table>
-            </div>
+                    </thead>
+                    <tbody>
+                        {items && items !== undefined ? items.map((item, key)=>
+                        <tr key={key}>
+                            <td>{item.data.name}</td>
+                             <td>{item.data.address}</td>
+                            <td>{'$'+item.data.item}</td>
+                            <td>
+                                <Button color='warning' onClick={()=>this.getData(item.id)}> 
+                                    <FontAwesomeIcon icon="edit" />
+                                </Button>
+                            </td>
+                            <td>
+                                <Button color='danger' onClick={()=>this.deleteData(item.id)}>
+                                    <FontAwesomeIcon icon="trash" />
+                                </Button>
+                            </td>
+                        </tr>
+                        ) 
+                        : <span>Null</span>}
+                    </tbody>
+                </Table>
+            </React.Fragment>
         )
     }
 }
